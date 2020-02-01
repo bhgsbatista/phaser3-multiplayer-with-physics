@@ -1,12 +1,17 @@
+import { PlayerRoles } from '../game';
 export default class Controls {
-  left = false
-  right = false
-  up = false
-  controls: Control[] = []
-  none = true
-  prevNone = true
+  private left = false
+  private right = false
+  private up = false
+  private controls: Control[] = []
+  private none = true
+  private prevNone = true
 
-  constructor(public scene: Phaser.Scene, public socket: SocketIOClient.Socket) {
+  constructor(
+    public scene: Phaser.Scene,
+    public socket: SocketIOClient.Socket,
+    public playerRole: PlayerRoles
+  ){
     // add a second pointer
     scene.input.addPointer()
 
@@ -32,10 +37,24 @@ export default class Controls {
       detectPointer(gameObject, false)
     )
 
-    let left = new Control(scene, 0, 0, 'left').setRotation(-0.5 * Math.PI)
-    let right = new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI)
-    let up = new Control(scene, 0, 0, 'up')
-    this.controls.push(left, right, up)
+    this.controls = []
+
+    switch(playerRole) {
+      case PlayerRoles.ROWER:
+        this.controls.push(
+          new Control(scene, 0, 0, 'left').setRotation(-0.5 * Math.PI),
+          new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI)
+        )
+        break;
+      case PlayerRoles.NAVIGATOR:
+        this.controls.push(
+          new Control(scene, 0, 0, 'up')
+        )
+        break;
+      default:
+        console.error("Unknown player role: " + playerRole)
+    }
+
     this.resize()
 
     this.scene.events.on('update', this.update, this)
@@ -50,14 +69,19 @@ export default class Controls {
     const controlsRadius = (192 / 2) * SCALE
     const w = this.scene.cameras.main.width - 10 - controlsRadius
     const h = this.scene.cameras.main.height - 10 - controlsRadius
-    let positions = [
-      {
-        x: controlsRadius + 10,
-        y: h
-      },
-      { x: controlsRadius + 214, y: h },
-      { x: w, y: h }
-    ]
+
+    const positions: { x: number, y: number }[] = new Array(this.controls.length)
+
+    switch(this.playerRole) {
+      case PlayerRoles.ROWER:
+        positions[0] = { x: controlsRadius + 10, y: h }
+        positions[1] = { x: w, y: h }
+        break;
+      case PlayerRoles.NAVIGATOR:
+        console.warn("PlayerRoles.NAVIGATOR not yet implemented")
+        break;
+    }
+
     this.controls.forEach((ctl, i) => {
       ctl.setPosition(positions[i].x, positions[i].y)
       ctl.setScale(SCALE)

@@ -225,9 +225,7 @@ export default class MainScene extends Phaser.Scene {
         dude.body.position.x - this.cameras.main.width / 2,
         dude.body.position.y - this.cameras.main.height * 0.8
       )
-    }
-
-    if (!PHYSICS_DEBUG) {
+    } else {
       this.objects.forEach(obj => {
         if (obj.body.position.y > world.height) obj.kill()
 
@@ -270,18 +268,8 @@ export default class MainScene extends Phaser.Scene {
 
       let send: any[] = []
       Object.keys(this.objectsToSync).forEach(key => {
-        // this syncs the dude on every frame
-        // but the boxes only on every second frame
-        // (safes a lot of bandwidth)
-        if (this.objectsToSync[key].skin === SKINS.BOX) {
-          if (this.tick % 2 === 0) {
-            send.push(this.objectsToSync[key])
-            delete this.objectsToSync[key]
-          }
-        } else {
-          send.push(this.objectsToSync[key])
-          delete this.objectsToSync[key]
-        }
+        send.push(this.objectsToSync[key])
+        delete this.objectsToSync[key]
       })
 
       if (send.length > 0) {

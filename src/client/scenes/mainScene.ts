@@ -8,6 +8,7 @@ import Resize from '../components/resize'
 
 import SyncManager from '../../server/managers/syncManager'
 import { SKINS } from '../../constants'
+import { PlayerRoles } from '../game';
 
 interface Objects {
   [key: string]: any
@@ -58,9 +59,9 @@ export default class MainScene extends Phaser.Scene {
       .setDepth(100)
       .setScrollFactor(0)
 
-    let starfield = this.add.tileSprite(world.x, world.y, world.width, world.height, 'starfield').setOrigin(0)
+    let background = this.add.rectangle(world.x, world.y, world.width, world.height, 0x2E86C1).setOrigin(0)
     this.cursors = new Cursors(this, socket)
-    this.controls = new Controls(this, socket)
+    this.controls = new Controls(this, socket, PlayerRoles.ROWER)
     let texts = new Texts(this)
     let fullscreenBtn = fullscreenButton(this)
 
@@ -168,7 +169,7 @@ export default class MainScene extends Phaser.Scene {
     })
 
     const resize = () => {
-      starfield.setScale(Math.max(this.cameras.main.height / starfield.height, 1))
+      background.setScale(Math.max(this.cameras.main.height / background.height, 1))
       texts.resize()
       if (this.controls) this.controls.resize()
       fullscreenBtn.setPosition(this.cameras.main.width - 16, 16)
