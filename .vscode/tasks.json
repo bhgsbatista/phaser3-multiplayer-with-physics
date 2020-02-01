@@ -21,7 +21,7 @@
       "label": "build server",
       "type": "shell",
       "command": "npm run server:build"
-    }
+    },
     {
       "label": "watch client",
       "type": "shell",
