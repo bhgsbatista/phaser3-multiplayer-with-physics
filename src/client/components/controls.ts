@@ -1,4 +1,5 @@
-import { PlayerRoles } from '../game';
+import { PlayerRole } from "../../constants"
+
 export default class Controls {
   private left = false
   private right = false
@@ -10,7 +11,7 @@ export default class Controls {
   constructor(
     public scene: Phaser.Scene,
     public socket: SocketIOClient.Socket,
-    public playerRole: PlayerRoles
+    public playerRole: PlayerRole
   ){
     // add a second pointer
     scene.input.addPointer()
@@ -40,13 +41,13 @@ export default class Controls {
     this.controls = []
 
     switch(playerRole) {
-      case PlayerRoles.ROWER:
+      case PlayerRole.ROWER:
         this.controls.push(
           new Control(scene, 0, 0, 'left').setRotation(-0.5 * Math.PI),
           new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI)
         )
         break;
-      case PlayerRoles.NAVIGATOR:
+      case PlayerRole.NAVIGATOR:
         this.controls.push(
           new Control(scene, 0, 0, 'up')
         )
@@ -73,11 +74,11 @@ export default class Controls {
     const positions: { x: number, y: number }[] = new Array(this.controls.length)
 
     switch(this.playerRole) {
-      case PlayerRoles.ROWER:
+      case PlayerRole.ROWER:
         positions[0] = { x: controlsRadius + 10, y: h }
         positions[1] = { x: w, y: h }
         break;
-      case PlayerRoles.NAVIGATOR:
+      case PlayerRole.NAVIGATOR:
         console.warn("PlayerRoles.NAVIGATOR not yet implemented")
         break;
     }

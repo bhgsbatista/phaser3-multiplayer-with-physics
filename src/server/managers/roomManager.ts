@@ -3,6 +3,7 @@ interface GameScene extends Phaser.Scene {
 }
 interface User {
   id: string
+  role: PlayerRole
   lastUpdate: number
   clientId: number
   roomId: string
@@ -20,13 +21,13 @@ interface Room {
   scene: GameScene
   removing: boolean
   users: Users
-  level: number
   sceneKey: string
 }
 interface Rooms {
   [room: string]: Room
 }
 import Game, { PhaserGame } from '../game/game'
+import { PlayerRole } from '../../constants'
 import { Math as phaserMath } from 'phaser'
 
 let randomDataGenerator = new phaserMath.RandomDataGenerator()
@@ -34,8 +35,8 @@ let randomDataGenerator = new phaserMath.RandomDataGenerator()
 import uuidv4 from 'uuid/v4'
 import Stats from '../socket/ioStats'
 
-const MAX_PLAYERS_PER_ROOM = 4
-const USER_KICK_TIMEOUT = 60000
+export const MAX_PLAYERS_PER_ROOM = 8
+const USER_KICK_TIMEOUT = 60_000 // 1 minute
 
 export default class RoomManager {
   rooms: Rooms = {}
@@ -54,19 +55,19 @@ export default class RoomManager {
   }
 
   // the 2 functions below should be better
-  async joinRoom(socket: Socket, scene: string, level: number) {
-    if (typeof scene !== 'string' || typeof level !== 'number') {
+  async joinRoom(socket: Socket, scene: string, playerRole: PlayerRole) {
+    if (typeof scene !== 'string' || typeof playerRole !== 'number') {
       console.error('level or scene is not defined in ioGame.ts')
       return
     }
-    socket.room = this.chooseRoom({ scene: scene, level: +level })
+    socket.room = this.chooseRoom({ scene, playerRole })
 
     // create a new game instance if this room does not exist yet
     if (!this.rooms[socket.room]) {
-      await this.createRoom(socket.room, scene, +level)
+      await this.createRoom(socket.room, scene, playerRole)
     }
 
-    this.addUser(socket)
+    this.addUser(socket, playerRole)
     this.rooms[socket.room].scene.events.emit('createDude', socket.clientId, socket.id)
   }
 
@@ -86,13 +87,14 @@ export default class RoomManager {
     socket.emit('changingRoom', { scene: scene, level: +level })
   }
 
-  addUser(socket: Socket) {
+  addUser(socket: Socket, role: PlayerRole) {
     let newUsers: Users = {
       [socket.id]: {
         roomId: socket.room,
         lastUpdate: Date.now(),
         clientId: socket.clientId,
-        id: socket.id
+        id: socket.id,
+        role
       }
     }
 
@@ -133,17 +135,16 @@ export default class RoomManager {
     else return false
   }
 
-  createRoom = async (roomId: string, scene: string, level: number) => {
+  createRoom = async (roomId: string, scene: string, playerRole: PlayerRole) => {
     this.stats.log(`Create new room <b>${roomId}</b>`)
 
-    let game: PhaserGame = await Game(this, roomId, { scene, level })
+    let game: PhaserGame = await Game(this, roomId, { scene })
 
     this.rooms[roomId] = {
       sceneKey: scene,
-      level: +level,
-      roomId: roomId,
+      roomId,
       users: {},
-      game: game,
+      game,
       // @ts-ignore
       scene: game.scene.keys['MainScene'],
       removing: false
@@ -169,8 +170,8 @@ export default class RoomManager {
     }, 5000)
   }
 
-  chooseRoom = (props: { scene: string; level: number }): string => {
-    const { scene, level } = props
+  chooseRoom = (props: { scene: string; playerRole: PlayerRole }): string => {
+    const { scene, playerRole } = props
 
     let rooms = Object.keys(this.rooms)
 
@@ -184,7 +185,6 @@ export default class RoomManager {
       if (
         count < MAX_PLAYERS_PER_ROOM &&
         room.sceneKey === scene &&
-        room.level === level &&
         !this.isRemoving(rooms[i])
       ) {
         chosenRoom = rooms[i]

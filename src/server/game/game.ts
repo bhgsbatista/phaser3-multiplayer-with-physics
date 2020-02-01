@@ -11,7 +11,7 @@ export class PhaserGame extends Phaser.Game {
   }
 }
 
-const Game = (roomManager: RoomManager, roomId: string, options: { scene: string; level: number }) => {
+const Game = (roomManager: RoomManager, roomId: string, options: { scene: string }) => {
   let config = { ...commonConfig }
 
   if (options.scene === 'ArcadeScene') {
@@ -30,7 +30,7 @@ const Game = (roomManager: RoomManager, roomId: string, options: { scene: string
   // but it work well :)
   config.callbacks = {
     preBoot: () => {
-      return { level: +options.level, roomManager, roomId }
+      return { roomManager, roomId }
     }
   }
 

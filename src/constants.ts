@@ -1,6 +1,12 @@
-export const SKINS = {
-  DUDE: 0,
-  BOX: 1,
-  STAR: 2,
-  MUMMY: 3
+export const enum SKINS {
+  DUDE,
+  BOX,
+  STAR,
+  MUMMY
+}
+
+export const enum PlayerRole {
+  ROWER,
+  NAVIGATOR,
+  SPECTATOR
 }

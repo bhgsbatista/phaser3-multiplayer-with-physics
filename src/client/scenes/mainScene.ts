@@ -7,8 +7,7 @@ import { world } from '../config'
 import Resize from '../components/resize'
 
 import SyncManager from '../../server/managers/syncManager'
-import { SKINS } from '../../constants'
-import { PlayerRoles } from '../game';
+import { SKINS, PlayerRole } from '../../constants'
 
 interface Objects {
   [key: string]: any
@@ -34,24 +33,24 @@ export default class MainScene extends Phaser.Scene {
 
   cursors: Cursors | undefined
   controls: Controls | undefined
-  level: number = 0
+  playerRole: PlayerRole
 
   constructor() {
     super({ key: 'MainScene' })
   }
 
-  init(props: { scene: string; level: number; socket: Socket }) {
-    const { scene, level = 0, socket } = props
-    this.level = level
+  init(props: { scene: string; playerRole: PlayerRole; socket: Socket }) {
+    const { scene, playerRole, socket } = props
+    this.playerRole = playerRole
     this.socket = socket
-    this.socket.emit('joinRoom', { scene, level })
+    this.socket.emit('joinRoom', { scene, playerRole })
   }
 
   create() {
     const socket = this.socket
 
     let levelText = this.add
-      .text(0, 0, `Level ${this.level + 1}`, {
+      .text(0, 0, `Rescue your Crew!`, {
         color: '#ffffff',
         fontSize: 42
       })
@@ -61,7 +60,7 @@ export default class MainScene extends Phaser.Scene {
 
     let background = this.add.rectangle(world.x, world.y, world.width, world.height, 0x2E86C1).setOrigin(0)
     this.cursors = new Cursors(this, socket)
-    this.controls = new Controls(this, socket, PlayerRoles.ROWER)
+    this.controls = new Controls(this, socket, PlayerRole.ROWER)
     let texts = new Texts(this)
     let fullscreenBtn = fullscreenButton(this)
 
@@ -96,8 +95,7 @@ export default class MainScene extends Phaser.Scene {
         delete this.objects[key]
       })
       socket.emit('getInitialState')
-      this.level = data.level | 0
-      levelText.setText(`Level ${this.level + 1}`)
+      levelText.setText(`Level WIP`)
     })
 
     socket.on('S' /* short for syncGame */, (res: any) => {

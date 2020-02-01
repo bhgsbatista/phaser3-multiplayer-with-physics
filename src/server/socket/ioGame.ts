@@ -9,9 +9,9 @@ export default class IoGame {
     ioNspGame.on('connection', async (socket: Socket) => {
       roomManager.generateClientId(socket)
 
-      socket.on('joinRoom', async (data: { scene: string; level: number }) => {
-        const { scene, level } = data
-        await roomManager.joinRoom(socket, scene, +level)
+      socket.on('joinRoom', async (data: { scene: string; playerRole: number }) => {
+        const { scene, playerRole } = data
+        await roomManager.joinRoom(socket, scene, playerRole)
         ioStats.log(`New user <b>${socket.id}</b> connected! to room ${socket.room}`)
       })
 
