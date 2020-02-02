@@ -97,7 +97,7 @@ export default class MainScene extends Phaser.Scene {
     })
 
     // removes a dude
-    this.events.addListener('removeDude', (clientId: number) => {
+    this.events.addListener('removePlayer', (clientId: number) => {
       let dudes = this.objects.filter(obj => obj.clientId && obj.clientId === clientId)
       dudes.forEach(dude => dude.kill())
     })

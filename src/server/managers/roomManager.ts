@@ -75,7 +75,7 @@ export default class RoomManager {
       .emit('S' /* short for syncGame */, { connectCounter: this.getRoomUsersArray(socket.room).length })
 
     if (this.isRemoving(socket.room)) return
-    this.rooms[socket.room].scene.events.emit('removeDude', socket.clientId)
+    this.rooms[socket.room].scene.events.emit('removePlayer', socket.clientId)
   }
 
   async changeRoom(socket: Socket, scene: string, playerRole: PlayerRole) {

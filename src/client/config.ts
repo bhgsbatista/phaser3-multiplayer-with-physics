@@ -9,16 +9,16 @@ const DEFAULT_HEIGHT = 720
 export const world = {
   x: 0,
   y: 0,
-  width: 2000,
-  height: 2000
+  width: 960,
+  height: 960
 }
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.WEBGL,
   backgroundColor: 0x2E86C1,
   scale: {
     parent: 'phaser-game',
-    mode: Phaser.Scale.NONE,
+    mode: Phaser.Scale.ENVELOP,
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT
   },
@@ -29,8 +29,7 @@ const config = {
       gravity: {
         y: 0
       },
-      debug: false,
-      debugBodyColor: 0xff00ff
+      debug: false
     }
   }
 }

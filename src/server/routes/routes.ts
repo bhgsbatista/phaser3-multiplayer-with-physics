@@ -44,9 +44,9 @@ export default class Routes {
           </style>
           <h1>Repair The Ship</h1>
           <h2>Visit ${getIpAddress()}${port !== '80' ? `:${port}` : ''} to Play</h2>
-          <a href="/play">Play the Game</a>
-          <a href="/physics">Debug the Physics</a>
-          <a href="/stats">View Server Stats</a>
+          <a href="/play">Play</a>
+          <a href="/physics">Debug Physics</a>
+          <a href="/stats">Server Stats</a>
         </body>`)
     })
 
@@ -55,35 +55,6 @@ export default class Routes {
     })
 
     this.router.get('/physics', (req, res) => {
-      res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-          <title>Document</title>
-        </head>
-        <body>
-          <style>
-            body {
-              font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
-            }
-            li {
-              line-height: 3;
-            }
-          </style>
-          <ul>
-            <li><a href="/matter">Debug Matter Physics</a></li>
-            <li><a href="/arcade">Debug Arcade Physics</a></li>
-          </ul>
-        </body>`)
-    })
-
-    this.router.get('/matter', (req, res) => {
-      res.sendFile(path.join(__dirname, '../../dist/physics/index.html'))
-    })
-    this.router.get('/arcade', (req, res) => {
       res.sendFile(path.join(__dirname, '../../dist/physics/index.html'))
     })
 

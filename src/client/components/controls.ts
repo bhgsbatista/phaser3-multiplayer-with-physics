@@ -44,11 +44,7 @@ export default class Controls {
       case PlayerRole.ROWER:
         this.controls.push(
           new Control(scene, 0, 0, 'left').setRotation(-0.5 * Math.PI),
-          new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI)
-        )
-        break;
-      case PlayerRole.NAVIGATOR:
-        this.controls.push(
+          new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI),
           new Control(scene, 0, 0, 'up')
         )
         break;
@@ -76,7 +72,8 @@ export default class Controls {
     switch(this.playerRole) {
       case PlayerRole.ROWER:
         positions[0] = { x: controlsRadius + 10, y: h }
-        positions[1] = { x: w, y: h }
+        positions[1] = { x: controlsRadius + 214, y: h }
+        positions[2] = { x: w, y: h }
         break;
       case PlayerRole.NAVIGATOR:
         console.warn("PlayerRoles.NAVIGATOR not yet implemented")

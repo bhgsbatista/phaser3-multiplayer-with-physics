@@ -21,11 +21,11 @@ export default class MenuScene extends Phaser.Scene {
 
     let texts: any[] = []
 
-    texts.push(this.add.text(0, 0, 'Choose Your Role:', styles).setOrigin(0.5, 0))
+    texts.push(this.add.text(0, 0, 'Repair The Ship', styles).setOrigin(0.5, 0))
 
     texts.push(
       this.add
-        .text(0, 0, 'Join as a Rower', styles)
+        .text(0, 0, 'Join Game', styles)
         .setOrigin(0.5, 0)
         .setInteractive()
         .on('pointerdown', () => {
@@ -33,19 +33,19 @@ export default class MenuScene extends Phaser.Scene {
         })
     )
 
-    texts.push(
-      this.add
-        .text(0, 0, 'Join as a Navigator', styles)
-        .setOrigin(0.5, 0)
-        .setInteractive()
-        .on('pointerdown', () => {
-          this.scene.start('MainScene', { scene: 'ArcadeScene', playerRole: PlayerRole.NAVIGATOR, socket: this.socket })
-        })
-    )
+    // texts.push(
+    //   this.add
+    //     .text(0, 0, 'Join as a Navigator', styles)
+    //     .setOrigin(0.5, 0)
+    //     .setInteractive()
+    //     .on('pointerdown', () => {
+    //       this.scene.start('MainScene', { scene: 'ArcadeScene', playerRole: PlayerRole.NAVIGATOR, socket: this.socket })
+    //     })
+    // )
 
     texts.push(
       this.add
-        .text(0, 0, 'Join as a Spectator', styles)
+        .text(0, 0, 'Spectate Game', styles)
         .setOrigin(0.5, 0)
         .setInteractive()
         .on('pointerdown', () => {

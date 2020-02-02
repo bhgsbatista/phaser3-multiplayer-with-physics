@@ -11,7 +11,7 @@ import { SKINS } from '../../../constants'
 
 export default class MainScene extends Phaser.Scene {
   id = 0
-  dudeGroup: Phaser.GameObjects.Group
+  playerGroup: Phaser.GameObjects.Group
   boxGroup: Phaser.GameObjects.Group
   mummyGroup: Phaser.GameObjects.Group
   star: Star
@@ -57,7 +57,7 @@ export default class MainScene extends Phaser.Scene {
     })
 
     this.physics.world.setBounds(world.x, world.y, world.width, world.height)
-    this.dudeGroup = this.add.group()
+    this.playerGroup = this.add.group()
     this.boxGroup = this.add.group()
     this.mummyGroup = this.add.group()
     this.map = new Map(this, world, this.level)
@@ -85,8 +85,8 @@ export default class MainScene extends Phaser.Scene {
       // mock socket
       this.debug.socket = { emit: () => {} }
       this.debug.cursors = new Cursors(this, this.debug.socket)
-      this.debug.dude = new Player(this, this.newId(), { clientId: 55555, socketId: 'some-socket-id' })
-      this.dudeGroup.add(this.debug.dude)
+      this.debug.player = new Player(this, this.newId(), { clientId: 55555, socketId: 'some-socket-id' })
+      this.playerGroup.add(this.debug.player)
 
       // this helps debugging
       this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -96,21 +96,21 @@ export default class MainScene extends Phaser.Scene {
     }
 
     this.events.addListener('createPlayer', (clientId: number, socketId: string) => {
-      let dude: Player = this.dudeGroup.getFirstDead()
-      if (dude) {
-        dude.revive(clientId, socketId)
+      let player: Player = this.playerGroup.getFirstDead()
+      if (player) {
+        player.revive(clientId, socketId)
       } else {
-        dude = new Player(this, this.newId(), { clientId, socketId })
-        this.dudeGroup.add(dude)
+        player = new Player(this, this.newId(), { clientId, socketId })
+        this.playerGroup.add(player)
       }
     })
 
     this.events.addListener('U' /* short for updateDude */, (res: any) => {
       // @ts-ignore
-      let dudes: Player[] = this.dudeGroup.children.getArray().filter((dude: Player) => {
-        return dude.clientId && dude.clientId === res.clientId
+      let players: Player[] = this.playerGroup.children.getArray().filter((player: Player) => {
+        return player.clientId && player.clientId === res.clientId
       })
-      if (dudes[0]) {
+      if (players[0]) {
         let b = res.updates
         let updates = {
           left: b === 1 || b === 5 ? true : false,
@@ -118,38 +118,38 @@ export default class MainScene extends Phaser.Scene {
           up: b === 4 || b === 6 || b === 5 ? true : false,
           none: b === 8 ? true : false
         }
-        dudes[0].setUpdates(updates)
+        players[0].setUpdates(updates)
       }
     })
 
-    this.events.addListener('removeDude', (clientId: number) => {
+    this.events.addListener('removePlayer', (clientId: number) => {
       // @ts-ignore
-      this.dudeGroup.children.iterate((dude: Player) => {
-        if (dude.clientId === clientId) {
-          dude.kill()
+      this.playerGroup.children.iterate((player: Player) => {
+        if (player.clientId === clientId) {
+          player.kill()
         }
       })
     })
 
-    this.physics.add.collider(this.dudeGroup, this.boxGroup)
+    this.physics.add.collider(this.playerGroup, this.boxGroup)
     this.physics.add.collider(this.mummyGroup, this.boxGroup)
     // @ts-ignore
-    this.physics.add.overlap(this.mummyGroup, this.dudeGroup, (mummy: Mummy, dude: Player) => {
+    this.physics.add.overlap(this.mummyGroup, this.playerGroup, (mummy: Mummy, player: Player) => {
       if (mummy.dead) return
-      if (mummy.body.touching.up && dude.body.touching.down) {
-        dude.setVelocityY(-300)
+      if (mummy.body.touching.up && player.body.touching.down) {
+        player.setVelocityY(-300)
         mummy.kill()
       } else {
-        dude.gotHit()
+        player.gotHit()
       }
     })
     // @ts-ignore
-    this.physics.add.overlap(this.dudeGroup, this.star, (dude: Player, star: Star) => {
-      if (dude.dead) return
-      dude.kill()
+    this.physics.add.overlap(this.playerGroup, this.star, (player: Player, star: Star) => {
+      if (player.dead) return
+      player.kill()
 
       let nextLevel = this.level + 1 >= this.map.countTotalLevels() ? 0 : this.level + 1
-      let socket = this.roomManager.ioNspGame.sockets[dude.socketId] as any
+      let socket = this.roomManager.ioNspGame.sockets[player.socketId] as any
 
       this.roomManager.changeRoom(socket, 'ArcadeScene', nextLevel)
     })
@@ -160,7 +160,7 @@ export default class MainScene extends Phaser.Scene {
     let objects: any[] = []
 
     SyncManager.prepareFromPhaserGroup(this.boxGroup, objects)
-    SyncManager.prepareFromPhaserGroup(this.dudeGroup, objects)
+    SyncManager.prepareFromPhaserGroup(this.playerGroup, objects)
     SyncManager.prepareFromPhaserSprite(this.star, objects)
 
     return SyncManager.encode(objects)
@@ -181,16 +181,15 @@ export default class MainScene extends Phaser.Scene {
     if (PHYSICS_DEBUG) {
       this.debug.cursors.update()
       let cursorsDown = this.debug.cursors.cursorsDown()
-      let dude: Player = this.debug.dude
-      dude.setUpdates(cursorsDown)
-      dude.update()
+      let player: Player = this.debug.player
+      player.setUpdates(cursorsDown)
+      player.update()
       this.cameras.main.setScroll(
-        dude.body.position.x - this.cameras.main.width / 2,
-        dude.body.position.y - this.cameras.main.height * 0.8
+        player.body.position.x - this.cameras.main.width / 2,
+        player.body.position.y - this.cameras.main.height * 0.8
       )
+      return
     }
-
-    if (PHYSICS_DEBUG) return
 
     const prepareObjectToSync = (obj: any) => {
       let cleanObjectToSync = SyncManager.cleanObjectToSync(obj)
@@ -235,7 +234,7 @@ export default class MainScene extends Phaser.Scene {
       child.sync = false
     })
     // @ts-ignore
-    this.dudeGroup.children.iterate((child: Player) => {
+    this.playerGroup.children.iterate((child: Player) => {
       child.update()
       // we only update the dude if one if the 4 properties below have changed
       let x = child.prevPosition.x.toFixed(0) !== child.body.position.x.toFixed(0)
@@ -261,16 +260,8 @@ export default class MainScene extends Phaser.Scene {
     let send: any[] = []
 
     Object.keys(this.objectsToSync).forEach(key => {
-      // we only sync the mummies on every 3th frame
-      if (this.objectsToSync[key].skin === SKINS.MUMMY) {
-        if (this.tick % 3 === 0) {
-          send.push(this.objectsToSync[key])
-          delete this.objectsToSync[key]
-        }
-      } else {
-        send.push(this.objectsToSync[key])
-        delete this.objectsToSync[key]
-      }
+      send.push(this.objectsToSync[key])
+      delete this.objectsToSync[key]
     })
 
     if (send.length > 0) {

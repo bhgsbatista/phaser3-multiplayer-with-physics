@@ -42,7 +42,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   setNewPosition() {
-    this.setPosition(Phaser.Math.RND.integerInRange(0, 1000), Phaser.Math.RND.integerInRange(100, 300))
+    this.setPosition(this.scene.physics.world.bounds.centerX, this.scene.physics.world.bounds.centerY)
   }
 
   postUpdate() {
@@ -74,7 +74,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     else if (this.updates.right) this.setVelocityX(400)
     else this.setVelocityX(0)
 
-    if (this.updates.up && this.body.blocked.down) this.setVelocityY(-600)
+    if (this.updates.up) this.setVelocityY(-600)
 
     this.animation = this.body.velocity.x >= 0.5 ? 'right' : this.body.velocity.x <= -0.5 ? 'left' : 'idle'
 

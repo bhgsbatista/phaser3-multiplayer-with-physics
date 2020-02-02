@@ -21,17 +21,10 @@ const Game = (io: SocketIO.Namespace) => {
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
 
-  if (/arcade/.test(href)) {
-    config.scene = [ArcadeScene]
-    config.physics = arcadePhysics
-    // @ts-ignore
-    config.physics.arcade.debug = true
-  }
-  if (/matter/.test(href)) {
-    config.scene = [MatterScene]
-    config.physics = matterPhysics
-    if (config.physics.matter) config.physics.matter.debug = true
-  }
+  config.scene = [ArcadeScene]
+  config.physics = arcadePhysics
+  // @ts-ignore
+  config.physics.arcade.debug = true
 
   return new PhaserGame(io, config)
 }
