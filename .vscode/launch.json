@@ -10,7 +10,7 @@
       "name": "Debug Client",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}",
-      "postDebugTask": "watch client"
+      "preLaunchTask": "build client"
     },
     {
       "type": "node",
@@ -29,7 +29,7 @@
   "compounds": [
     {
       "name": "Debug Server/Client",
-      "configurations": ["Debug Client", "Debug Server"]
+      "configurations": ["Debug Server", "Debug Client"]
     }
   ]
 }

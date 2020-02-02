@@ -18,9 +18,14 @@
       "command": "npm run build"
     },
     {
+      "label": "build client",
+      "type": "shell",
+      "command": "npm run build:client"
+    },
+    {
       "label": "build server",
       "type": "shell",
-      "command": "npm run server:build"
+      "command": "npm run build:server"
     },
     {
       "label": "watch client",

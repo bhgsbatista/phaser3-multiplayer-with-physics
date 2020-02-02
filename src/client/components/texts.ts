@@ -28,7 +28,7 @@ const texts = [
   }
 ]
 
-export default class Texts {
+export default class DebugText {
   textObjects: { [key: string]: Phaser.GameObjects.Text } = {}
   hidden = false
   bug: Phaser.GameObjects.Image | undefined

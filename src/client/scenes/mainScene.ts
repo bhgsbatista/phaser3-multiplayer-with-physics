@@ -1,4 +1,4 @@
-import Texts from '../components/texts'
+import DebugText from '../components/texts'
 import Cursors from '../components/cursors'
 import { setDudeAnimation, setMummyAnimation } from '../components/animations'
 import fullscreenButton from '../components/fullscreenButton'
@@ -60,8 +60,8 @@ export default class MainScene extends Phaser.Scene {
 
     let background = this.add.rectangle(world.x, world.y, world.width, world.height, 0x2E86C1).setOrigin(0)
     this.cursors = new Cursors(this, socket)
-    this.controls = new Controls(this, socket, PlayerRole.ROWER)
-    let texts = new Texts(this)
+    this.controls = new Controls(this, socket, this.playerRole)
+    let texts = new DebugText(this)
     let fullscreenBtn = fullscreenButton(this)
 
     this.cameras.main.setBounds(world.x, world.y, world.width, world.height)
