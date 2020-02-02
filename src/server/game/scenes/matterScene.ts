@@ -95,7 +95,7 @@ export default class MainScene extends Phaser.Scene {
     })
 
     // adds another box every 1.2 seconds
-    this.time.addEvent({
+    /*this.time.addEvent({
       delay: 1200,
       loop: true,
       callback: () => {
@@ -103,7 +103,7 @@ export default class MainScene extends Phaser.Scene {
         let y = 100
         gameObjectGroup.add(x, y, SKINS.BOX)
       }
-    })
+    })*/
 
     if (PHYSICS_DEBUG) {
       this.add
@@ -116,9 +116,7 @@ export default class MainScene extends Phaser.Scene {
       this.debug.socket = { emit: () => {} } // mock socket
       this.debug.cursors = new Cursors(this, this.debug.socket)
       this.debug.dude = gameObjectGroup.add(400, 400, SKINS.DUDE, { clientId: 55555, socketId: 'some-socket-id' })
-    }
-
-    if (!PHYSICS_DEBUG) {
+    } else {
       this.time.addEvent({
         delay: 5000,
         loop: true,

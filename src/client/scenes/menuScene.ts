@@ -14,14 +14,14 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     const styles = {
-      color: '#000000',
+      color: '#ffffff',
       align: 'center',
       fontSize: 52
     }
 
     let texts: any[] = []
 
-    texts.push(this.add.text(0, 0, 'Choose which Role\nyou want to play', styles).setOrigin(0.5, 0))
+    texts.push(this.add.text(0, 0, 'Choose Your Role:', styles).setOrigin(0.5, 0))
 
     texts.push(
       this.add
@@ -45,7 +45,7 @@ export default class MenuScene extends Phaser.Scene {
 
     texts.push(
       this.add
-        .text(0, 0, 'Join as a Spectatator', styles)
+        .text(0, 0, 'Join as a Spectator', styles)
         .setOrigin(0.5, 0)
         .setInteractive()
         .on('pointerdown', () => {

@@ -56,9 +56,9 @@ export default class SyncManager {
 
     let objectToSync: { [key: string]: any } = {}
 
-    addToObjectToSync('id', obj.id || obj?.body.id)
-    addToObjectToSync('x', obj.x || obj?.body.position.x || null)
-    addToObjectToSync('y', obj.y || obj?.body.position.y || null)
+    addToObjectToSync('id', obj.id || obj.body.id)
+    addToObjectToSync('x', obj.x || obj.body?.position.x || null)
+    addToObjectToSync('y', obj.y || obj.body?.position.y || null)
     addToObjectToSync('angle', obj.angle !== 'undefined' ? obj.angle : null)
     addToObjectToSync('dead', obj.dead !== 'undefined' ? obj.dead : null)
     addToObjectToSync('skin', obj.skin !== 'undefined' ? obj.skin : null)

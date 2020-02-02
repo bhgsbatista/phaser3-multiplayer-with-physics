@@ -15,7 +15,7 @@ export const world = {
 
 const config = {
   type: Phaser.WEBGL,
-  backgroundColor: '#ffffff',
+  backgroundColor: 0x2E86C1,
   scale: {
     parent: 'phaser-game',
     mode: Phaser.Scale.NONE,
