@@ -174,6 +174,7 @@ export default class MainScene extends Phaser.Scene {
       fullscreenBtn.setPosition(this.cameras.main.width - 16, 16)
       this.cameras.main.setScroll(this.cameras.main.worldView.x, world.height)
       levelText.setPosition(this.cameras.main.width / 2, 20)
+      socket.emit('getInitialState')
     }
 
     this.scale.on('resize', (gameSize: any, baseSize: any, displaySize: any, resolution: any) => {
