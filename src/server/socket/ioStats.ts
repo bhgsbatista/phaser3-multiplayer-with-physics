@@ -20,7 +20,12 @@ export default class IoStats {
   }
 
   setTotalObjects(roomId: string, count: number) {
-    this.totalObjects = { ...this.totalObjects, [roomId]: { count: count } }
+    const room = this.totalObjects[roomId];
+    if (room) {
+      room.count = count;
+    } else {
+      this.totalObjects[roomId] = { count };
+    }
   }
 
   removeTotalObjects(roomId: string) {

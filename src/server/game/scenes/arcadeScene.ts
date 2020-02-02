@@ -1,6 +1,6 @@
 import { world } from '../../../client/config'
 import Box from '../arcadeObjects/box'
-import Dude from '../arcadeObjects/dude'
+import Player from '../arcadeObjects/player'
 import Cursors from '../../../client/components/cursors'
 import Star from '../arcadeObjects/star'
 import Mummy from '../arcadeObjects/mummy'
@@ -85,7 +85,7 @@ export default class MainScene extends Phaser.Scene {
       // mock socket
       this.debug.socket = { emit: () => {} }
       this.debug.cursors = new Cursors(this, this.debug.socket)
-      this.debug.dude = new Dude(this, this.newId(), { clientId: 55555, socketId: 'some-socket-id' })
+      this.debug.dude = new Player(this, this.newId(), { clientId: 55555, socketId: 'some-socket-id' })
       this.dudeGroup.add(this.debug.dude)
 
       // this helps debugging
@@ -96,18 +96,18 @@ export default class MainScene extends Phaser.Scene {
     }
 
     this.events.addListener('createPlayer', (clientId: number, socketId: string) => {
-      let dude: Dude = this.dudeGroup.getFirstDead()
+      let dude: Player = this.dudeGroup.getFirstDead()
       if (dude) {
         dude.revive(clientId, socketId)
       } else {
-        dude = new Dude(this, this.newId(), { clientId, socketId })
+        dude = new Player(this, this.newId(), { clientId, socketId })
         this.dudeGroup.add(dude)
       }
     })
 
     this.events.addListener('U' /* short for updateDude */, (res: any) => {
       // @ts-ignore
-      let dudes: Dude[] = this.dudeGroup.children.getArray().filter((dude: Dude) => {
+      let dudes: Player[] = this.dudeGroup.children.getArray().filter((dude: Player) => {
         return dude.clientId && dude.clientId === res.clientId
       })
       if (dudes[0]) {
@@ -124,7 +124,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.events.addListener('removeDude', (clientId: number) => {
       // @ts-ignore
-      this.dudeGroup.children.iterate((dude: Dude) => {
+      this.dudeGroup.children.iterate((dude: Player) => {
         if (dude.clientId === clientId) {
           dude.kill()
         }
@@ -134,7 +134,7 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.collider(this.dudeGroup, this.boxGroup)
     this.physics.add.collider(this.mummyGroup, this.boxGroup)
     // @ts-ignore
-    this.physics.add.overlap(this.mummyGroup, this.dudeGroup, (mummy: Mummy, dude: Dude) => {
+    this.physics.add.overlap(this.mummyGroup, this.dudeGroup, (mummy: Mummy, dude: Player) => {
       if (mummy.dead) return
       if (mummy.body.touching.up && dude.body.touching.down) {
         dude.setVelocityY(-300)
@@ -144,7 +144,7 @@ export default class MainScene extends Phaser.Scene {
       }
     })
     // @ts-ignore
-    this.physics.add.overlap(this.dudeGroup, this.star, (dude: Dude, star: Star) => {
+    this.physics.add.overlap(this.dudeGroup, this.star, (dude: Player, star: Star) => {
       if (dude.dead) return
       dude.kill()
 
@@ -181,7 +181,7 @@ export default class MainScene extends Phaser.Scene {
     if (PHYSICS_DEBUG) {
       this.debug.cursors.update()
       let cursorsDown = this.debug.cursors.cursorsDown()
-      let dude: Dude = this.debug.dude
+      let dude: Player = this.debug.dude
       dude.setUpdates(cursorsDown)
       dude.update()
       this.cameras.main.setScroll(
@@ -235,7 +235,7 @@ export default class MainScene extends Phaser.Scene {
       child.sync = false
     })
     // @ts-ignore
-    this.dudeGroup.children.iterate((child: Dude) => {
+    this.dudeGroup.children.iterate((child: Player) => {
       child.update()
       // we only update the dude if one if the 4 properties below have changed
       let x = child.prevPosition.x.toFixed(0) !== child.body.position.x.toFixed(0)

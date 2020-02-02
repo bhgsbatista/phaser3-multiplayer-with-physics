@@ -29,7 +29,7 @@ export default class MenuScene extends Phaser.Scene {
         .setOrigin(0.5, 0)
         .setInteractive()
         .on('pointerdown', () => {
-          this.scene.start('MainScene', { scene: 'MatterScene', playerRole: PlayerRole.ROWER, socket: this.socket })
+          this.scene.start('MainScene', { scene: 'ArcadeScene', playerRole: PlayerRole.ROWER, socket: this.socket })
         })
     )
 
@@ -39,7 +39,7 @@ export default class MenuScene extends Phaser.Scene {
         .setOrigin(0.5, 0)
         .setInteractive()
         .on('pointerdown', () => {
-          this.scene.start('MainScene', { scene: 'MatterScene', playerRole: PlayerRole.NAVIGATOR, socket: this.socket })
+          this.scene.start('MainScene', { scene: 'ArcadeScene', playerRole: PlayerRole.NAVIGATOR, socket: this.socket })
         })
     )
 
@@ -50,7 +50,7 @@ export default class MenuScene extends Phaser.Scene {
         .setInteractive()
         .on('pointerdown', () => {
           this.scene.stop()
-          this.scene.start('MainScene', { scene: 'MatterScene', playerRole: PlayerRole.SPECTATOR, socket: this.socket })
+          this.scene.start('MainScene', { scene: 'ArcadeScene', playerRole: PlayerRole.SPECTATOR, socket: this.socket })
         })
     )
 

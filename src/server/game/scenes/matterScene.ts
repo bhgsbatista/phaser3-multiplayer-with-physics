@@ -1,6 +1,6 @@
 import GameObjectGroup from '../matterObjects/matterGameObjectGroup'
 import MatterGameObject from '../matterObjects/matterGameObject'
-import Dude from '../matterObjects/dude'
+import Player from '../matterObjects/player'
 import Star from '../matterObjects/star'
 import { world } from '../../../client/config'
 
@@ -10,10 +10,16 @@ import SyncManager from '../../managers/syncManager'
 import RoomManager from '../../managers/roomManager'
 import { SKINS } from '../../../constants'
 
+interface MatterDebugObjs {
+  socket?: Partial<SocketIOClient.Socket>
+  cursors?: Cursors
+  player?: Player
+}
+
 export default class MainScene extends Phaser.Scene {
   objects: MatterGameObject[] = []
   objectsToSync: any = {}
-  debug: any = {}
+  debug: MatterDebugObjs = {}
   tick = 0
   level: number
   roomManager: RoomManager
@@ -58,7 +64,7 @@ export default class MainScene extends Phaser.Scene {
     // this will stop the scene
     this.events.addListener('stopScene', () => {
       this.objects.forEach(obj => {
-        this.matter.world.remove(this.matter.world, obj.body)
+        this.matter.world.remove(obj.body)
       })
       this.roomManager.stats.removeTotalObjects(this.roomId)
       this.scene.stop()
@@ -77,7 +83,7 @@ export default class MainScene extends Phaser.Scene {
 
     // updates the position of a dude
     this.events.addListener('U' /* short for updateDude */, (res: any) => {
-      let dudes: Dude[] = this.objects.filter(obj => obj.clientId && obj.clientId === res.clientId) as any
+      let dudes: Player[] = this.objects.filter(obj => obj.clientId && obj.clientId === res.clientId) as any
       if (dudes[0]) {
         let b = res.updates
         let updates = {
@@ -107,27 +113,6 @@ export default class MainScene extends Phaser.Scene {
       }
     })*/
 
-    if (PHYSICS_DEBUG) {
-      this.add
-        .text(24, 24, 'Physics Debugging Version\nMove with Arrow Keys', {
-          fontSize: 36
-        })
-        .setScrollFactor(0)
-        .setOrigin(0)
-        .setAlpha(0.6)
-      this.debug.socket = { emit: () => {} } // mock socket
-      this.debug.cursors = new Cursors(this, this.debug.socket)
-      this.debug.dude = gameObjectGroup.add(400, 400, SKINS.DUDE, { clientId: 55555, socketId: 'some-socket-id' })
-    } else {
-      this.time.addEvent({
-        delay: 5000,
-        loop: true,
-        callback: () => {
-          this.roomManager.stats.setTotalObjects(this.roomId, this.objects.length)
-        }
-      })
-    }
-
     // add the big star
     gameObjectGroup.add(worldCenterX, world.height - 320 - 100 - 115, SKINS.STAR, {
       category: 'big'
@@ -155,8 +140,8 @@ export default class MainScene extends Phaser.Scene {
 
         // Dude hits star
         if (labels.includes('dude') && labels.includes('star')) {
-          let starBody = bodyA.label === 'star' ? bodyA : bodyB
-          let star: Star = gameObjectGroup.getObjectById(starBody.id) as any
+          const starBody = bodyA.label === 'star' ? bodyA : bodyB
+          const star = gameObjectGroup.getObjectById(starBody.id) as Star
           if (star) {
             star.kill()
             star.setReviveTimer()
@@ -165,36 +150,42 @@ export default class MainScene extends Phaser.Scene {
 
         // Dude's sensor hits another body
         if (/Sensor/.test(bodyA.label) || /Sensor/.test(bodyB.label)) {
-          let sensorBody = /Sensor/.test(bodyA.label) ? bodyA : bodyB
-          let otherBody = /Sensor/.test(bodyA.label) ? bodyB : bodyA
+          const sensorBody = /Sensor/.test(bodyA.label) ? bodyA : bodyB
+          const otherBody = /Sensor/.test(bodyA.label) ? bodyB : bodyA
           if (otherBody.isSensor) return
 
-          let dude: Dude = gameObjectGroup.getObjectById(sensorBody.parent.id) as any
-          if (dude) {
-            let sepPadding = 2
-            if (otherBody.isStatic) {
-              sepPadding = 0.1
-            }
+          const player = gameObjectGroup.getObjectById(sensorBody.parent.id) as Player
+          if (player) {
+            const sepPadding = otherBody.isStatic ? 0.1 : 2
+            const sep = pair.separation - sepPadding
 
-            let sep = pair.separation - sepPadding
-
-            if (sensorBody === dude.sensors.left) {
-              dude.move.leftAllowed = !otherBody.isStatic
-              dude.touching.left = true
+            if (sensorBody === player.sensors.left) {
+              player.move.leftAllowed = !otherBody.isStatic
+              player.touching.left = true
               if (pair.separation > sepPadding) {
-                dude.setTranslate(sep)
-                dude.translate()
+                player.setTranslate(sep, 0)
               }
-            } else if (sensorBody === dude.sensors.right) {
-              dude.move.rightAllowed = !otherBody.isStatic
-              dude.touching.right = true
+            } else if (sensorBody === player.sensors.right) {
+              player.move.rightAllowed = !otherBody.isStatic
+              player.touching.right = true 
               if (pair.separation > sepPadding) {
-                dude.setTranslate(-sep)
-                dude.translate()
+                player.setTranslate(-sep, 0)
               }
-            } else if (sensorBody === dude.sensors.bottom) {
-              dude.touching.bottom = true
+            } else if (sensorBody === player.sensors.top) {
+              player.move.upAllowed = !otherBody.isStatic
+              player.touching.top = true
+              if (pair.separation > sepPadding) {
+                player.setTranslate(0, sep)
+              }
+            } else if (sensorBody === player.sensors.bottom) {
+              player.move.downAllowed = !otherBody.isStatic
+              player.touching.bottom = true
+              if (pair.separation > sepPadding) {
+                player.setTranslate(0, -sep)
+              }
             }
+          } else {
+            console.warn(`Failed to find Matter object with ID: ${sensorBody.parent.id}`)
           }
         }
       })
@@ -202,6 +193,34 @@ export default class MainScene extends Phaser.Scene {
     // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-5-matter-physics-platformer-d14d1f614557
     this.matter.world.on('collisionstart', collisionEvent)
     this.matter.world.on('collisionactive', collisionEvent)
+
+    if (PHYSICS_DEBUG) {
+      this.add
+        .text(24, 24, 'Physics Debugging Version\nMove with Arrow Keys', {
+          fontSize: 36
+        })
+        .setScrollFactor(0)
+        .setOrigin(0)
+        .setAlpha(0.6)
+      this.debug.socket = { emit: () => { } } as any // mock socket
+      this.debug.cursors = new Cursors(this, this.debug.socket as SocketIOClient.Socket)
+      this.debug.player = gameObjectGroup.add(
+        worldCenterX,
+        worldCenterY,
+        SKINS.DUDE,
+        { clientId: 55555, socketId: 'some-socket-id' }
+      ) as Player
+    } else {
+      this.roomManager.stats.setTotalObjects(this.roomId, this.objects.length)
+      this.time.addEvent({
+        delay: 5000,
+        startAt: 1,
+        loop: true,
+        callback: () => {
+          this.roomManager.stats.setTotalObjects(this.roomId, this.objects.length)
+        }
+      })
+    }
   }
 
   /** Sends the initial state to the client */
@@ -216,14 +235,14 @@ export default class MainScene extends Phaser.Scene {
     if (this.tick > 1000000) this.tick = 0
 
     if (PHYSICS_DEBUG) {
-      this.debug.cursors.update()
-      let cursorsDown = this.debug.cursors.cursorsDown()
-      let dude: Dude = this.debug.dude
-      dude.setUpdates(cursorsDown)
-      dude.update()
+      this.debug.cursors!.update()
+      let cursorsDown = this.debug.cursors!.cursorsDown()
+      let player: Player = this.debug.player!
+      player.setUpdates(cursorsDown)
+      player.update()
       this.cameras.main.setScroll(
-        dude.body.position.x - this.cameras.main.width / 2,
-        dude.body.position.y - this.cameras.main.height * 0.8
+        player.body.position.x - this.cameras.main.width / 2,
+        player.body.position.y - this.cameras.main.height * 0.8
       )
     } else {
       this.objects.forEach(obj => {

@@ -1,4 +1,4 @@
-import Dude from './dude'
+import Player from './player'
 import Box from './box'
 import MatterGameObject from './matterGameObject'
 import Star from './star'
@@ -23,7 +23,7 @@ export default class GameObjectGroup {
     })
   }
 
-  getObjectById(id: string) {
+  getObjectById(id: string): MatterGameObject | undefined {
     let object = undefined
     this.objects.forEach((obj: any) => {
       if (obj.body.id === id) object = obj
@@ -51,7 +51,7 @@ export default class GameObjectGroup {
       if (skin === SKINS.BOX) object = new Box(this.scene, x, y)
       else if (skin === SKINS.STAR) object = new Star(this.scene, x, y, category)
       else if (typeof clientId !== 'undefined' && typeof socketId !== 'undefined')
-        object = new Dude(this.scene, x, y, clientId, socketId)
+        object = new Player(this.scene, x, y, clientId, socketId)
       if (object) this.objects.push(object)
     }
 

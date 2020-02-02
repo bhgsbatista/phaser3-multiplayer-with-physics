@@ -1,16 +1,20 @@
 import { SKINS } from "../../../constants";
 
-export default class Dude extends Phaser.Physics.Arcade.Sprite {
+interface InputUpdates {
+  left?: boolean
+  right?: boolean
+  up?: boolean
+  none?: boolean
+}
+
+export default class Player extends Phaser.Physics.Arcade.Sprite {
   skin = SKINS.DUDE
   clientId: number
   socketId: string
   id: string
-  private updates: any = {}
+  private updates: InputUpdates = {}
   private shouldUpdate = true
-  prevPosition = {
-    x: -1,
-    y: -1
-  }
+  prevPosition = new Phaser.Math.Vector2(-1)
   dead = false
   prevDead = false
   color: number = 0xffffff
@@ -31,11 +35,9 @@ export default class Dude extends Phaser.Physics.Arcade.Sprite {
     this.setNewPosition()
     this.setCollideWorldBounds(true).setOrigin(0)
 
-    // @ts-ignore
     this.body.setSize(32, 48)
 
     // matterJS uses an id per object, so I do the same here to be consistent
-    // @ts-ignore
     this.id = id.toString()
   }
 
@@ -44,7 +46,7 @@ export default class Dude extends Phaser.Physics.Arcade.Sprite {
   }
 
   postUpdate() {
-    this.prevPosition = { ...this.body.position }
+    this.prevPosition = this.body.position.clone()
     this.prevDead = this.dead
     this.prevColor = this.color
   }
@@ -92,7 +94,7 @@ export default class Dude extends Phaser.Physics.Arcade.Sprite {
     this.dead = true
   }
 
-  setUpdates(updates: any) {
+  setUpdates(updates: InputUpdates) {
     this.shouldUpdate = true
     this.updates = updates
   }

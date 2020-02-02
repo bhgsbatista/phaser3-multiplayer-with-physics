@@ -30,7 +30,9 @@ export default class Cursors {
 
       if (this.cursors.left.isDown) {
         this.left = true
-      } else if (this.cursors.right.isDown) {
+      }
+
+      if (this.cursors.right.isDown) {
         this.right = true
       }
 

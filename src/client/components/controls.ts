@@ -98,6 +98,7 @@ export default class Controls {
       if (this.right) total += 2
       if (this.up) total += 4
       if (this.none) total += 8
+      console.log(`update: total=${total}`)
       this.socket.emit('U' /* short for updateDude */, total)
     }
 
