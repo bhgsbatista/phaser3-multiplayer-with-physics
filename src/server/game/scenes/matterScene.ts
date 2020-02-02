@@ -48,7 +48,7 @@ export default class MainScene extends Phaser.Scene {
       let body = bounds.walls[key]
       Matter.Body.set(body, { friction: 0.05, frictionStatic: 0.05, frictionAir: 0.01 })
       // we do not need the top, so we set it to isSensor
-      if (key === 'top') Matter.Body.set(body, { isSensor: true })
+      // if (key === 'top') Matter.Body.set(body, { isSensor: true })
     })
 
     // instantiate the GameObjectGroup
@@ -69,7 +69,7 @@ export default class MainScene extends Phaser.Scene {
       let leftX = Phaser.Math.RND.integerInRange(world.x + 100, this.cameras.main.width / 2 - 640)
       let rightX = Phaser.Math.RND.integerInRange(this.cameras.main.width / 2 + 640, world.x + world.width - 100)
       let x = Math.random() > 0.5 ? leftX : rightX
-      let y = -50
+      let y = 50
       gameObjectGroup.add(x, y, SKINS.DUDE, { clientId, socketId })
     })
 

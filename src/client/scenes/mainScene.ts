@@ -75,7 +75,7 @@ export default class MainScene extends Phaser.Scene {
       texts.setLatency(this.latency)
     })
     this.time.addEvent({
-      delay: 250, // max 4 times per second
+      delay: 500, // max 2 times per second
       loop: true,
       callback: () => {
         if (!this.latency.canSend) return
@@ -87,7 +87,7 @@ export default class MainScene extends Phaser.Scene {
       }
     })
 
-    socket.on('changingRoom', (data: { scene: string; level: number }) => {
+    socket.on('changingRoom', (data: { scene: string; playerRole: PlayerRole }) => {
       console.log('You are changing room')
       // destroy all objects and get new onces
       Object.keys(this.objects).forEach((key: string) => {

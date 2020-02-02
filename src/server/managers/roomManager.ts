@@ -78,10 +78,10 @@ export default class RoomManager {
     this.rooms[socket.room].scene.events.emit('removeDude', socket.clientId)
   }
 
-  async changeRoom(socket: Socket, scene: string, level: number) {
+  async changeRoom(socket: Socket, scene: string, playerRole: PlayerRole) {
     this.leaveRoom(socket)
-    await this.joinRoom(socket, scene, +level)
-    socket.emit('changingRoom', { scene: scene, level: +level })
+    await this.joinRoom(socket, scene, playerRole)
+    socket.emit('changingRoom', { scene, playerRole })
   }
 
   addUser(socket: Socket, role: PlayerRole) {
