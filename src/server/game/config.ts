@@ -14,7 +14,7 @@ export default config
 export const arcadePhysics = {
   default: 'arcade',
   arcade: {
-    gravity: { y: 1500 }
+    gravity: { y: 0 }
   }
 }
 
