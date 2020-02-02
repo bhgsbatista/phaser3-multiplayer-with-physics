@@ -1,0 +1,51 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "shell",
+      "command": "npm run dev",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "npm run build"
+    },
+    {
+      "label": "build client",
+      "type": "shell",
+      "command": "npm run build:client"
+    },
+    {
+      "label": "build server",
+      "type": "shell",
+      "command": "npm run build:server"
+    },
+    {
+      "label": "build physics",
+      "type": "shell",
+      "command": "npm run build:physics"
+    },
+    {
+      "label": "dev client",
+      "type": "shell",
+      "command": "npm run client"
+    },
+    {
+      "label": "dev server",
+      "type": "shell",
+      "command": "npm run server"
+    },
+    {
+      "label": "dev physics",
+      "type": "shell",
+      "command": "npm run physics"
+    }
+  ]
+}
