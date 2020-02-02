@@ -41,6 +41,7 @@ export default class MainScene extends Phaser.Scene {
   create() {
     const Matter = Phaser.Physics.Matter.Matter
     const worldCenterX = (world.x + world.width) / 2
+    const worldCenterY = (world.y + world.height) / 2
 
     // add and modify the world bounds
     let bounds: any = this.matter.world.setBounds(world.x, world.y, world.width, world.height)
@@ -65,11 +66,12 @@ export default class MainScene extends Phaser.Scene {
     })
 
     // creates a new dude, when a new user connects
-    this.events.addListener('createDude', (clientId: number, socketId: string) => {
-      let leftX = Phaser.Math.RND.integerInRange(world.x + 100, this.cameras.main.width / 2 - 640)
-      let rightX = Phaser.Math.RND.integerInRange(this.cameras.main.width / 2 + 640, world.x + world.width - 100)
-      let x = Math.random() > 0.5 ? leftX : rightX
-      let y = 50
+    this.events.addListener('createPlayer', (clientId: number, socketId: string) => {
+      //let leftX = Phaser.Math.RND.integerInRange(world.x + 100, this.cameras.main.width / 2 - 640)
+      //let rightX = Phaser.Math.RND.integerInRange(this.cameras.main.width / 2 + 640, world.x + world.width - 100)
+      //let x = Math.random() > 0.5 ? leftX : rightX
+      let x = worldCenterX
+      let y = worldCenterY
       gameObjectGroup.add(x, y, SKINS.DUDE, { clientId, socketId })
     })
 

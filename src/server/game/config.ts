@@ -22,7 +22,7 @@ export const matterPhysics = {
   default: 'matter',
   matter: {
     gravity: {
-      y: 2
+      y: 0.8
     }
   }
 }

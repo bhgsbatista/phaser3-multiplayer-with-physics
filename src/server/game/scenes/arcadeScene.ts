@@ -95,7 +95,7 @@ export default class MainScene extends Phaser.Scene {
       })
     }
 
-    this.events.addListener('createDude', (clientId: number, socketId: string) => {
+    this.events.addListener('createPlayer', (clientId: number, socketId: string) => {
       let dude: Dude = this.dudeGroup.getFirstDead()
       if (dude) {
         dude.revive(clientId, socketId)

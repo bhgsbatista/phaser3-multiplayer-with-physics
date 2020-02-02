@@ -27,7 +27,7 @@ const config = {
     default: 'matter',
     matter: {
       gravity: {
-        y: 0.8
+        y: 0
       },
       debug: false,
       debugBodyColor: 0xff00ff

@@ -3,6 +3,8 @@ import pidusage from 'pidusage'
 import path from 'path'
 import RoomManager from '../managers/roomManager'
 import IoStats from '../socket/ioStats'
+import { getIpAddress } from '../utilities/getIpAddress'
+import { port } from '../server';
 
 export default class Routes {
   router: express.Router
@@ -40,10 +42,11 @@ export default class Routes {
               background-color: #ffc683;
             }
           </style>
-          <h1>Phaser 3: Real-Time Multiplayer Game with Physics</h1>
+          <h1>Repair The Ship</h1>
+          <h2>Visit ${getIpAddress()}${port !== '80' ? `:${port}` : ''} to Play</h2>
           <a href="/play">Play the Game</a>
           <a href="/physics">Debug the Physics</a>
-          <a href="/stats">View Server Stats</a>          
+          <a href="/stats">View Server Stats</a>
         </body>`)
     })
 

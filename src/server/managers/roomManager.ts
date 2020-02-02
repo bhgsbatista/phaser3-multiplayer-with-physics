@@ -65,7 +65,7 @@ export default class RoomManager {
     }
 
     this.addUser(socket, playerRole)
-    this.rooms[socket.room].scene.events.emit('createDude', socket.clientId, socket.id)
+    this.rooms[socket.room].scene.events.emit('createPlayer', socket.clientId, socket.id)
   }
 
   leaveRoom(socket: Socket) {
