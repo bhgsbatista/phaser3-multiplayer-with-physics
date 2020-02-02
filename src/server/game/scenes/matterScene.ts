@@ -119,12 +119,14 @@ export default class MainScene extends Phaser.Scene {
     })
 
     // add medium stars
-    for (let x = worldCenterX - 128; x < worldCenterX + 128 + 64; x += 128)
+    for (let x = worldCenterX - 128; x < worldCenterX + 128 + 64; x += 128) {
       gameObjectGroup.add(x, world.height - 320 - 100, SKINS.STAR, { category: 'medium' })
+    }
 
     // add yellow stars
-    for (let x = worldCenterX - 160 - 80; x < worldCenterX + 320 + 80; x += 160)
+    for (let x = worldCenterX - 160 - 80; x < worldCenterX + 320 + 80; x += 160) {
       gameObjectGroup.add(x, world.height - 320, SKINS.STAR)
+    }
 
     // create 4 boxes at server start
     gameObjectGroup.add(1280, 640, SKINS.BOX)
