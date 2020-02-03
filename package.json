@@ -18,7 +18,7 @@
     "build:client": "webpack --config webpack/webpack.client.js",
     "build:physics": "webpack --config webpack/webpack.physics.js",
     "serve": "node dist/server/server.js",
-    "prettier": "prettier --write 'src/**/*.ts'",
+    "prettier": "prettier --write src/**/*.ts",
     "docker:start": "npm i --only=production && npm run serve",
     "docker:publish": "npm run build && docker-compose up -d --build",
     "docker:up": "docker-compose up -d --build"

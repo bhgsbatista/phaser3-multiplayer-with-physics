@@ -1,7 +1,7 @@
-import { BodyType } from "matter"
+import { BodyType } from 'matter'
 
 type BodyWithPrevVelocity = BodyType & {
-  prevVelocity: { x: number, y: number }
+  prevVelocity: { x: number; y: number }
 }
 
 export default class MatterGameObject {
